@@ -1,4 +1,10 @@
-use std::{net::{TcpListener, TcpStream}, io::{BufReader, BufRead, Write}, fs, thread, time::Duration};
+use std::{
+    fs,
+    io::{BufRead, BufReader, Write},
+    net::{TcpListener, TcpStream},
+    thread,
+    time::Duration,
+};
 
 use rust_web_server::ThreadPool;
 
@@ -8,7 +14,7 @@ fn main() {
 
     for stream in listener.incoming().take(2) {
         let stream = stream.unwrap();
-        
+
         pool.execute(|| {
             handle_connection(stream);
         })
@@ -26,8 +32,8 @@ fn handle_connection(mut stream: TcpStream) {
         "GET /sleep HTTP/1.1" => {
             thread::sleep(Duration::from_secs(5));
             ("HTTP/1.1 200 OK", "hello.html")
-        },
-        _ => ("HTTP/1.1 404 NOT FOUND", "not_found.html")
+        }
+        _ => ("HTTP/1.1 404 NOT FOUND", "not_found.html"),
     };
 
     let contents = fs::read_to_string(filename).unwrap();

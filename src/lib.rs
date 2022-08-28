@@ -1,4 +1,7 @@
-use std::{thread::{self}, sync::{mpsc, Arc, Mutex}};
+use std::{
+    sync::{mpsc, Arc, Mutex},
+    thread::{self},
+};
 
 pub struct ThreadPool {
     workers: Vec<Worker>,
@@ -27,10 +30,16 @@ impl ThreadPool {
             workers.push(Worker::new(i, Arc::clone(&receiver)));
         }
 
-        ThreadPool { workers, sender: Some(sender)}
+        ThreadPool {
+            workers,
+            sender: Some(sender),
+        }
     }
 
-    pub fn execute<F>(&self, f: F) where F: FnOnce() + Send + 'static {
+    pub fn execute<F>(&self, f: F)
+    where
+        F: FnOnce() + Send + 'static,
+    {
         let job = Box::new(f);
         self.sender.as_ref().unwrap().send(job).unwrap();
     }
@@ -70,6 +79,9 @@ impl Worker {
             }
         });
 
-        Worker { id, thread: Some(thread), }
+        Worker {
+            id,
+            thread: Some(thread),
+        }
     }
 }
